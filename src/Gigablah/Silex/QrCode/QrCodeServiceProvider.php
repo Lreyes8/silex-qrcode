@@ -2,8 +2,8 @@
 
 namespace Gigablah\Silex\QrCode;
 
-use Silex\Application;
-use Silex\ServiceProviderInterface;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Endroid\QrCode\QrCode;
 
 /**
@@ -13,14 +13,14 @@ use Endroid\QrCode\QrCode;
  */
 class QrCodeServiceProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $pimple)
     {
-        $app['qrcode.options'] = array();
+        $pimple['qrcode.options'] = array();
 
-        $app['qrcode'] = $app->share(function ($app) {
+        $pimple['qrcode'] = $pimple->share(function ($app) {
             $qrCode = new QrCode();
 
-            foreach ($app['qrcode.options'] as $key => $value) {
+            foreach ($pimple['qrcode.options'] as $key => $value) {
                 $method = 'set'.implode('', array_map('ucwords', explode('_', $key)));
 
                 if (method_exists($qrCode, $method)) {
@@ -32,7 +32,7 @@ class QrCodeServiceProvider implements ServiceProviderInterface
         });
     }
 
-    public function boot(Application $app)
+    public function boot(Container $pimple)
     {
     }
 }
